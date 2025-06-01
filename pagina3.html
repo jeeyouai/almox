@@ -35,7 +35,6 @@
         li {
             margin-bottom: 15px;
         }
-        /* Cor verde para os botões */
         button {
             background-color: #28a745; /* Verde */
             color: white;
@@ -70,15 +69,7 @@
             const nomeTecnico = urlParams.get('tecnico');
             const tipoRequerimento = urlParams.get('tipo');
             
-            alert(`
-                Resumo até agora:
-                Técnico: ${decodeURIComponent(nomeTecnico)}
-                Tipo de Requerimento: ${tipoRequerimento === 'retirada' ? 'Retirada de Material' : 'Empréstimo de Material'}
-                Centro de Custo: ${centroCusto}
-            `);
-
-            // Próximo passo: Redirecionar para a página de listagem de itens.
-            // window.location.href = `pagina_itens.html?tecnico=${nomeTecnico}&tipo=${tipoRequerimento}&centroCusto=${centroCusto}`;
+            window.location.href = `pagina4.html?tecnico=${encodeURIComponent(nomeTecnico)}&tipo=${encodeURIComponent(tipoRequerimento)}&centroCusto=${encodeURIComponent(centroCusto)}`;
         }
     </script>
 </body>
