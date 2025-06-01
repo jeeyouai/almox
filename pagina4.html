@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhes do Item - Marcação de Dados</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f4f4f4;
+            margin: 0;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #555;
+            text-align: left;
+        }
+        .input-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .input-group span {
+            background-color: #e9ecef;
+            border: 1px solid #ced4da;
+            padding: 10px;
+            border-radius: 4px 0 0 4px;
+            color: #495057;
+            font-size: 16px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+        }
+        input[type="text"],
+        input[type="number"] {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 0 4px 4px 0;
+            font-size: 16px;
+            height: 38px;
+            box-sizing: border-box;
+        }
+        input[type="number"] {
+            border-radius: 4px;
+            width: calc(100% - 20px);
+            margin-bottom: 20px;
+        }
+        .radio-group {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+        .radio-group input[type="radio"] {
+            margin-right: 5px;
+        }
+        .radio-group label {
+            display: inline-block;
+            margin-right: 15px;
+            font-weight: normal;
+        }
+        button {
+            background-color: #28a745; /* Verde */
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #218838; /* Verde mais escuro no hover */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 id="tituloItem"></h1>
+        
+        <label for="codigoItem">Qual o código do item que você está <span id="tipoAcao"></span>?</label>
+        <div class="input-group">
+            <span>MAN-</span>
+            <input type="text" id="codigoItem" placeholder="Digite o código do item" required>
+        </div>
+        
+        <label for="quantidade">Qual a quantidade?</label>
+        <input type="number" id="quantidade" min="1" max="499" value="1" required>
+
+        <div class="radio-group">
+            <label>O item é para melhoria?</label><br>
+            <input type="radio" id="melhoriaSim" name="melhoria" value="sim" required>
+            <label for="melhoriaSim">Sim</label>
+            <input type="radio" id="melhoriaNao" name="melhoria" value="nao">
+            <label for="melhoriaNao">Não</label>
+        </div>
+        
+        <button onclick="registrarItem()">Registrar Item</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const tipoRequerimento = urlParams.get('tipo'); 
+            
+            const acao = tipoRequerimento === 'retirada' ? 'retirando' : 'emprestando';
+            document.getElementById('tipoAcao').innerText = acao;
+            document.getElementById('tituloItem').innerText = `Detalhes do Item para ${acao.charAt(0).toUpperCase() + acao.slice(1)}`;
+        });
+
+        function registrarItem() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const nomeTecnico = urlParams.get('tecnico');
+            const tipoRequerimento = urlParams.get('tipo');
+            const centroCusto = urlParams.get('centroCusto');
+            
+            const codigoItem = 'MAN-' + document.getElementById('codigoItem').value.trim();
+            const quantidade = document.getElementById('quantidade').value;
+            const melhoria = document.querySelector('input[name="melhoria"]:checked');
+
+            if (document.getElementById('codigoItem').value.trim() === '') {
+                alert('Por favor, insira o código do item.');
+                return;
+            }
+            if (quantidade < 1 || quantidade > 499) {
+                alert('A quantidade deve estar entre 1 e 499.');
+                return;
+            }
+            if (!melhoria) {
+                alert('Por favor, selecione se o item é para melhoria.');
+                return;
+            }
+            
+            window.location.href = `pagina5.html?tecnico=${encodeURIComponent(nomeTecnico)}&tipo=${encodeURIComponent(tipoRequerimento)}&centroCusto=${encodeURIComponent(centroCusto)}&codigoItem=${encodeURIComponent(codigoItem)}&quantidade=${encodeURIComponent(quantidade)}&melhoria=${encodeURIComponent(melhoria.value)}`;
+        }
+    </script>
+</body>
+</html>
