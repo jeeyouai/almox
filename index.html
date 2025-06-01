@@ -42,7 +42,7 @@
             font-size: 16px;
         }
         button {
-            background-color: #007bff;
+            background-color: #28a745; /* Verde */
             color: white;
             padding: 12px 20px;
             border: none;
@@ -52,13 +52,13 @@
             transition: background-color 0.3s ease;
         }
         button:hover {
-            background-color: #0056b3;
+            background-color: #218838; /* Verde mais escuro no hover */
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Almoxarifado Biotrop</h1>
+        <h1>Marcação de Dados do Almoxarifado</h1>
         <label for="nomeTecnico">Qual o nome do técnico que está iniciando o processo?</label>
         <input type="text" id="nomeTecnico" placeholder="Digite o nome do técnico" required>
         <button onclick="proximaPagina()">Continuar</button>
@@ -71,7 +71,6 @@
                 alert('Por favor, insira o nome do técnico para continuar.');
                 return;
             }
-            // Redireciona para a próxima página, passando o nome do técnico como parâmetro na URL
             window.location.href = `pagina2.html?tecnico=${encodeURIComponent(nomeTecnico)}`;
         }
     </script>
