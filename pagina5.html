@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Revisão e Geração de OM - Marcação de Dados</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f4f4f4;
+            margin: 0;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: left;
+            width: 90%;
+            max-width: 500px;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        p {
+            margin-bottom: 15px;
+            font-size: 1.1em;
+            color: #555;
+        }
+        p strong {
+            color: #333;
+        }
+        button {
+            background-color: #28a745; /* Verde */
+            color: white;
+            padding: 15px 25px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1.2em;
+            transition: background-color 0.3s ease;
+            width: 100%;
+            margin-top: 30px;
+        }
+        button:hover {
+            background-color: #218838; /* Verde mais escuro no hover */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Revisar Informações e Gerar OM</h1>
+        <div id="resumoInformacoes">
+            </div>
+        
+        <button onclick="gerarOM()">GERAR OM</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const nomeTecnico = urlParams.get('tecnico');
+            const tipoRequerimento = urlParams.get('tipo');
+            const centroCusto = urlParams.get('centroCusto');
+            const codigoItem = urlParams.get('codigoItem');
+            const quantidade = urlParams.get('quantidade');
+            const melhoria = urlParams.get('melhoria');
+
+            const resumoDiv = document.getElementById('resumoInformacoes');
+            resumoDiv.innerHTML = `
+                <p><strong>Técnico:</strong> ${decodeURIComponent(nomeTecnico)}</p>
+                <p><strong>Tipo de Requerimento:</strong> ${tipoRequerimento === 'retirada' ? 'Retirada de Material' : 'Empréstimo de Material'}</p>
+                <p><strong>Centro de Custo:</strong> ${decodeURIComponent(centroCusto.charAt(0).toUpperCase() + centroCusto.slice(1))}</p>
+                <p><strong>Código do Item:</strong> ${decodeURIComponent(codigoItem)}</p>
+                <p><strong>Quantidade:</strong> ${decodeURIComponent(quantidade)}</p>
+                <p><strong>Para Melhoria:</strong> ${melhoria === 'sim' ? 'Sim' : 'Não'}</p>
+            `;
+        });
+
+        function gerarOM() {
+            // Em um sistema real, aqui você enviaria esses dados para um servidor/banco de dados
+            // e geraria de fato a Ordem de Movimentação.
+            
+            alert('Ordem de Movimentação (OM) gerada com sucesso! Voltando para o início...');
+            
+            // Redireciona de volta para a página inicial
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>
