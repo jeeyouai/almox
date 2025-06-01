@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Início - Marcação de Dados</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f4f4f4;
+            margin: 0;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #555;
+        }
+        input[type="text"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Almoxarifado Biotrop</h1>
+        <label for="nomeTecnico">Qual o nome do técnico que está iniciando o processo?</label>
+        <input type="text" id="nomeTecnico" placeholder="Digite o nome do técnico" required>
+        <button onclick="proximaPagina()">Continuar</button>
+    </div>
+
+    <script>
+        function proximaPagina() {
+            const nomeTecnico = document.getElementById('nomeTecnico').value;
+            if (nomeTecnico.trim() === '') {
+                alert('Por favor, insira o nome do técnico para continuar.');
+                return;
+            }
+            // Redireciona para a próxima página, passando o nome do técnico como parâmetro na URL
+            window.location.href = `pagina2.html?tecnico=${encodeURIComponent(nomeTecnico)}`;
+        }
+    </script>
+</body>
+</html>
