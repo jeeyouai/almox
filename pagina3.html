@@ -21,18 +21,27 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             text-align: center;
             width: 90%;
-            max-width: 400px;
+            max-width: 600px; /* Aumenta a largura máxima para acomodar duas colunas */
         }
         h1 {
             color: #333;
             margin-bottom: 20px;
         }
-        ul {
-            list-style: none;
-            padding: 0;
+        .columns-container {
+            display: flex; /* Habilita o Flexbox */
+            justify-content: space-around; /* Espaça as colunas */
+            flex-wrap: wrap; /* Permite que as colunas quebrem se a tela for muito pequena */
+            gap: 20px; /* Espaço entre as colunas */
             margin-top: 30px;
         }
-        li {
+        .column {
+            flex: 1; /* Faz com que as colunas ocupem o espaço disponível */
+            min-width: 250px; /* Largura mínima para cada coluna antes de quebrar */
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .column li {
             margin-bottom: 15px;
         }
         button {
@@ -42,34 +51,66 @@
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 18px;
+            font-size: 16px; /* Tamanho da fonte dos botões para caber */
             width: 100%;
             transition: background-color 0.3s ease;
+            white-space: normal; /* Permite que o texto quebre linha no botão */
+            text-align: center;
         }
         button:hover {
             background-color: #218838; /* Verde mais escuro no hover */
+        }
+        /* Media query para telas menores: as colunas se tornam uma única coluna */
+        @media (max-width: 600px) {
+            .columns-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            .column {
+                min-width: unset; /* Remove a largura mínima para preencher 100% */
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1 id="tituloCentroCusto">Qual o centro de custo do material?</h1>
-        <ul>
-            <li><button onclick="selecionarCentroCusto('fermentacao')">Fermentação</button></li>
-            <li><button onclick="selecionarCentroCusto('envase')">Envase</button></li>
-            <li><button onclick="selecionarCentroCusto('empacotamento')">Empacotamento</button></li>
-            <li><button onclick="selecionarCentroCusto('manutencao')">Manutenção</button></li>
-            <li><button onclick="selecionarCentroCusto('inovacao')">Inovação</button></li>
-        </ul>
+        <div class="columns-container">
+            <ul class="column">
+                <li><button onclick="selecionarCentroCusto('faturamento-e-expedicao')">Faturamento e Expedição</button></li>
+                <li><button onclick="selecionarCentroCusto('empacotamento')">Empacotamento</button></li>
+                <li><button onclick="selecionarCentroCusto('envase')">Envase</button></li>
+                <li><button onclick="selecionarCentroCusto('fermentadores')">Fermentadores</button></li>
+                <li><button onclick="selecionarCentroCusto('esg')">ESG</button></li>
+                <li><button onclick="selecionarCentroCusto('facilities')">Facilities</button></li>
+                <li><button onclick="selecionarCentroCusto('fracionamento-de-mp')">Fracionamento de MP</button></li>
+            </ul>
+            <ul class="column">
+                <li><button onclick="selecionarCentroCusto('inovacao')">Inovação</button></li>
+                <li><button onclick="selecionarCentroCusto('laboratorio')">Laboratório</button></li>
+                <li><button onclick="selecionarCentroCusto('logistica-interna')">Logística Interna</button></li>
+                <li><button onclick="selecionarCentroCusto('manutencao')">Manutenção</button></li>
+                <li><button onclick="selecionarCentroCusto('pcp')">PCP</button></li>
+                <li><button onclick="selecionarCentroCusto('ti')">TI</button></li>
+                <li><button onclick="selecionarCentroCusto('utilidades')">Utilidades</button></li>
+            </ul>
+        </div>
     </div>
 
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // O título "Qual o centro de custo do material?" é fixo e não depende do nome do técnico aqui.
+        });
+
         function selecionarCentroCusto(centroCusto) {
             const urlParams = new URLSearchParams(window.location.search);
             const nomeTecnico = urlParams.get('tecnico');
+            const setorEmpresa = urlParams.get('setor'); // Pega o setor da URL
             const tipoRequerimento = urlParams.get('tipo');
             
-            window.location.href = `pagina4.html?tecnico=${encodeURIComponent(nomeTecnico)}&tipo=${encodeURIComponent(tipoRequerimento)}&centroCusto=${encodeURIComponent(centroCusto)}`;
+            // Redireciona para a página 4, passando todas as informações
+            window.location.href = `pagina4.html?tecnico=${encodeURIComponent(nomeTecnico)}&setor=${encodeURIComponent(setorEmpresa)}&tipo=${encodeURIComponent(tipoRequerimento)}&centroCusto=${encodeURIComponent(centroCusto)}`;
         }
     </script>
 </body>
