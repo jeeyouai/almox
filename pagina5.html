@@ -1,125 +1,145 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Revisão e Geração de RM</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 20px 0;
-        }
-        .container {
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            width: 90%;
-            max-width: 600px;
-        }
-        h1 {
-            color: #333;
-            margin-bottom: 25px;
-            text-align: center;
-        }
-        p {
-            margin-bottom: 10px;
-            font-size: 1.05em;
-            color: #555;
-            line-height: 1.6;
-        }
-        p strong {
-            color: #333;
-            display: inline-block;
-            min-width: 180px;
-        }
-        hr {
-            margin: 20px 0;
-        }
-        button {
-            background-color: #007bff;
-            color: white;
-            padding: 15px 25px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 1.2em;
-            transition: background-color 0.3s ease;
-            width: 100%;
-            margin-top: 30px;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Revisão e Geração de RM</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 40px 20px;
+      min-height: 100vh;
+    }
+    .container {
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      max-width: 600px;
+      width: 100%;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #333;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 5px;
+      color: #333;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-size: 1em;
+    }
+    input[readonly] {
+      background-color: #eee;
+    }
+    .data-geracao {
+      text-align: right;
+      font-style: italic;
+      color: #666;
+      margin-top: -10px;
+      margin-bottom: 20px;
+    }
+    button {
+      width: 100%;
+      padding: 15px;
+      background-color: #28a745; /* verde */
+      color: #fff;
+      font-size: 1.2em;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #218838;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Revisar Informações e Gerar RM</h1>
-        <div id="resumoInformacoes"></div>
-        <button onclick="gerarRM()">GERAR RM</button>
-    </div>
+  <div class="container">
+    <h1>Revisar e Editar Informações</h1>
+    <div class="data-geracao" id="dataGeracao"></div>
+    <form id="formRevisao">
+      <div class="form-group">
+        <label for="tecnico">Técnico (não editável):</label>
+        <input type="text" id="tecnico" name="tecnico" readonly />
+      </div>
+      <div class="form-group">
+        <label for="setor">Setor/Empresa:</label>
+        <input type="text" id="setor" name="setor" />
+      </div>
+      <div class="form-group">
+        <label for="tipo">Tipo de Requerimento:</label>
+        <select id="tipo" name="tipo">
+          <option value="retirada">Retirada de Material</option>
+          <option value="emprestimo">Empréstimo de Material</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="centroCusto">Centro de Custo:</label>
+        <input type="text" id="centroCusto" name="centroCusto" />
+      </div>
+      <div class="form-group">
+        <label for="codigoItem">Código do Item:</label>
+        <input type="text" id="codigoItem" name="codigoItem" />
+      </div>
+      <div class="form-group">
+        <label for="quantidade">Quantidade:</label>
+        <input type="number" id="quantidade" name="quantidade" />
+      </div>
+      <div class="form-group">
+        <label for="melhoria">Para melhoria?</label>
+        <select id="melhoria" name="melhoria">
+          <option value="sim">Sim</option>
+          <option value="nao">Não</option>
+        </select>
+      </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const urlParams = new URLSearchParams(window.location.search);
-            const dadosBrutos = urlParams.get('dados');
+      <button type="submit">GERAR RM</button>
+    </form>
+  </div>
 
-            if (!dadosBrutos) {
-                alert('Dados não encontrados. Retorne à etapa anterior.');
-                window.location.href = 'pagina4.html';
-                return;
-            }
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const urlParams = new URLSearchParams(window.location.search);
+      const get = (param) => decodeURIComponent(urlParams.get(param) || "");
 
-            const dados = JSON.parse(decodeURIComponent(dadosBrutos));
+      // Preencher os campos
+      document.getElementById("tecnico").value = get("tecnico");
+      document.getElementById("setor").value = get("setor");
+      document.getElementById("tipo").value = get("tipo");
+      document.getElementById("centroCusto").value = get("centroCusto").replace(/-/g, " ");
+      document.getElementById("codigoItem").value = get("codigoItem");
+      document.getElementById("quantidade").value = get("quantidade");
+      document.getElementById("melhoria").value = get("melhoria");
 
-            // Formatação da data e hora
-            const hoje = new Date();
-            const dia = hoje.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
-            const hora = hoje.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+      // Exibir data atual
+      const hoje = new Date();
+      const dia = hoje.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" });
+      const hora = hoje.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+      document.getElementById("dataGeracao").textContent = `Data: ${dia} às ${hora}`;
+    });
 
-            // Exibição amigável do centro de custo
-            const centroCustoDisplay = dados.centroCusto
-                .split('-')
-                .map(palavra => palavra.charAt(0).toUpperCase() + palavra.slice(1))
-                .join(' ');
-
-            const tipoRequerimentoDisplay = dados.tipoRequerimento === 'retirada' ? 'Retirada de Material' : 'Empréstimo de Material';
-
-            // Gera a lista de itens dinamicamente
-            let itensHtml = '';
-            dados.itens.forEach((item, index) => {
-                itensHtml += `<p><strong>Item ${index + 1}:</strong> ${item.codigo} — Quantidade: ${item.quantidade}</p>`;
-            });
-
-            // Montagem do resumo
-            const resumoDiv = document.getElementById('resumoInformacoes');
-            resumoDiv.innerHTML = `
-                <p><strong>Data da Geração:</strong> ${dia} às ${hora}</p>
-                <hr>
-                <p><strong>Técnico:</strong> ${decodeURIComponent(dados.tecnico)}</p>
-                <p><strong>Setor/Empresa:</strong> ${decodeURIComponent(dados.setor)}</p>
-                <p><strong>Tipo de Requerimento:</strong> ${tipoRequerimentoDisplay}</p>
-                <p><strong>Centro de Custo:</strong> ${centroCustoDisplay}</p>
-                ${dados.tipoRequisicao ? `<p><strong>Tipo de Requisição:</strong> ${dados.tipoRequisicao}</p>` : ''}
-                ${dados.numeroRequisicao ? `<p><strong>Número da Requisição:</strong> ${dados.numeroRequisicao}</p>` : ''}
-                <p><strong>Descrição de Uso:</strong> ${dados.descricaoUso}</p>
-                <hr>
-                ${itensHtml}
-                <p><strong>Para Melhoria:</strong> ${dados.melhoria === 'sim' ? 'Sim' : 'Não'}</p>
-            `;
-        });
-
-        function gerarRM() {
-            alert('Requisição de Material (RM) gerada com sucesso! Voltando para o início...');
-            window.location.href = 'index.html';
-        }
-    </script>
+    document.getElementById("formRevisao").addEventListener("submit", function (e) {
+      e.preventDefault();
+      alert("Requisição de Material gerada com sucesso!");
+      window.location.href = "pagina1.html"; // Altere para o nome real da sua página 1
+    });
+  </script>
 </body>
 </html>
