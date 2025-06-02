@@ -3,143 +3,201 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Revisão e Geração de RM</title>
+  <title>Revisão Final - Marcação de Dados</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       background-color: #f4f4f4;
       display: flex;
       justify-content: center;
-      align-items: flex-start;
-      padding: 40px 20px;
+      align-items: center;
       min-height: 100vh;
+      margin: 0;
+      padding: 20px;
     }
     .container {
-      background-color: #fff;
+      background: white;
       padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
       max-width: 600px;
-      width: 100%;
+      width: 90%;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
     h1 {
       text-align: center;
-      margin-bottom: 30px;
       color: #333;
-    }
-    .form-group {
       margin-bottom: 20px;
     }
-    label {
-      display: block;
-      font-weight: bold;
-      margin-bottom: 5px;
-      color: #333;
+    .info {
+      margin-bottom: 10px;
+      font-size: 1.05em;
+      display: flex; /* Use flexbox for alignment */
+      align-items: center; /* Vertically align items */
+      justify-content: space-between; /* Space out content and icon */
     }
-    input, select {
-      width: 100%;
-      padding: 10px;
+    .info.non-editable { /* New class for non-editable items */
+      justify-content: flex-start;
+    }
+    .info strong {
+      display: inline-block;
+      width: 160px;
+      color: #444;
+    }
+    .item-list {
+      margin-top: 15px;
+      background: #f9f9f9;
+      padding: 15px;
       border-radius: 5px;
-      border: 1px solid #ccc;
-      font-size: 1em;
     }
-    input[readonly] {
-      background-color: #eee;
+    .item-list h3 {
+      margin-bottom: 10px;
+      color: #333;
     }
-    .data-geracao {
+    .item {
+      margin-bottom: 8px;
+      padding-bottom: 5px;
+      border-bottom: 1px dashed #ccc;
+      display: flex; /* Use flexbox for alignment */
+      justify-content: space-between; /* Space out content and icon */
+      align-items: center; /* Vertically align items */
+    }
+    .item:last-child {
+      border-bottom: none;
+    }
+    .date {
       text-align: right;
-      font-style: italic;
       color: #666;
-      margin-top: -10px;
-      margin-bottom: 20px;
+      margin-top: 15px;
+      font-style: italic;
     }
     button {
+      margin-top: 25px;
       width: 100%;
-      padding: 15px;
-      background-color: #28a745; /* verde */
-      color: #fff;
-      font-size: 1.2em;
+      background-color: #28a745;
+      color: white;
       border: none;
-      border-radius: 5px;
+      padding: 15px;
+      font-size: 16px;
+      border-radius: 4px;
       cursor: pointer;
-      margin-top: 20px;
-      transition: background-color 0.3s;
     }
     button:hover {
       background-color: #218838;
+    }
+    .edit-icon {
+      margin-left: 10px;
+      cursor: pointer;
+      font-size: 1.2em;
+      color: #28a745; /* Green color for the icon */
+    }
+    .edit-icon:hover {
+      color: #218838;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Revisar e Editar Informações</h1>
-    <div class="data-geracao" id="dataGeracao"></div>
-    <form id="formRevisao">
-      <div class="form-group">
-        <label for="tecnico">Técnico (não editável):</label>
-        <input type="text" id="tecnico" name="tecnico" readonly />
-      </div>
-      <div class="form-group">
-        <label for="setor">Setor/Empresa:</label>
-        <input type="text" id="setor" name="setor" />
-      </div>
-      <div class="form-group">
-        <label for="tipo">Tipo de Requerimento:</label>
-        <select id="tipo" name="tipo">
-          <option value="retirada">Retirada de Material</option>
-          <option value="emprestimo">Empréstimo de Material</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label for="centroCusto">Centro de Custo:</label>
-        <input type="text" id="centroCusto" name="centroCusto" />
-      </div>
-      <div class="form-group">
-        <label for="codigoItem">Código do Item:</label>
-        <input type="text" id="codigoItem" name="codigoItem" />
-      </div>
-      <div class="form-group">
-        <label for="quantidade">Quantidade:</label>
-        <input type="number" id="quantidade" name="quantidade" />
-      </div>
-      <div class="form-group">
-        <label for="melhoria">Para melhoria?</label>
-        <select id="melhoria" name="melhoria">
-          <option value="sim">Sim</option>
-          <option value="nao">Não</option>
-        </select>
-      </div>
-
-      <button type="submit">GERAR RM</button>
-    </form>
+    <h1>Revisar Informações</h1>
+    <div id="dadosResumo"></div>
+    <button onclick="voltarParaInicio()">GERAR RM</button>
   </div>
 
   <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const urlParams = new URLSearchParams(window.location.search);
-      const get = (param) => decodeURIComponent(urlParams.get(param) || "");
-
-      // Preencher os campos
-      document.getElementById("tecnico").value = get("tecnico");
-      document.getElementById("setor").value = get("setor");
-      document.getElementById("tipo").value = get("tipo");
-      document.getElementById("centroCusto").value = get("centroCusto").replace(/-/g, " ");
-      document.getElementById("codigoItem").value = get("codigoItem");
-      document.getElementById("quantidade").value = get("quantidade");
-      document.getElementById("melhoria").value = get("melhoria");
-
-      // Exibir data atual
+    function formatarDataAtual() {
       const hoje = new Date();
-      const dia = hoje.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" });
-      const hora = hoje.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
-      document.getElementById("dataGeracao").textContent = `Data: ${dia} às ${hora}`;
-    });
+      const data = hoje.toLocaleDateString('pt-BR');
+      const hora = hoje.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+      return `${data} às ${hora}`;
+    }
 
-    document.getElementById("formRevisao").addEventListener("submit", function (e) {
-      e.preventDefault();
-      alert("Requisição de Material gerada com sucesso!");
-      window.location.href = "pagina1.html"; // Altere para o nome real da sua página 1
-    });
+    function preencherResumo() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const dadosBrutos = urlParams.get('dados');
+
+      if (!dadosBrutos) {
+        document.getElementById('dadosResumo').innerHTML = '<p>Erro: Nenhum dado foi recebido.</p>';
+        return;
+      }
+
+      const dados = JSON.parse(decodeURIComponent(dadosBrutos));
+      const divResumo = document.getElementById('dadosResumo');
+
+      let html = `
+        <div class="info non-editable"><strong>Técnico:</strong> ${dados.tecnico}</div>
+        <div class="info">
+          <span><strong>Setor:</strong> ${dados.setor}</span>
+          <span class="edit-icon" onclick="editarCampo('setor')">&#9998;</span>
+        </div>
+        <div class="info">
+          <span><strong>Tipo:</strong> ${dados.tipoRequerimento === 'retirada' ? 'Retirada de Material' : 'Empréstimo de Material'}</span>
+          <span class="edit-icon" onclick="editarCampo('tipoRequerimento')">&#9998;</span>
+        </div>
+        <div class="info">
+          <span><strong>Centro de Custo:</strong> ${dados.centroCusto.replace(/-/g, ' ')}</span>
+          <span class="edit-icon" onclick="editarCampo('centroCusto')">&#9998;</span>
+        </div>
+        <div class="info">
+          <span><strong>Descrição de Uso:</strong> ${dados.descricaoUso}</span>
+          <span class="edit-icon" onclick="editarCampo('descricaoUso')">&#9998;</span>
+        </div>
+        <div class="info">
+          <span><strong>Tipo de Requisição:</strong> ${dados.tipoRequisicao || 'Não informado'}</span>
+          <span class="edit-icon" onclick="editarCampo('tipoRequisicao')">&#9998;</span>
+        </div>
+      `;
+      if (dados.numeroRequisicao) {
+        html += `
+          <div class="info">
+            <span><strong>Número da Requisição:</strong> ${dados.numeroRequisicao}</span>
+            <span class="edit-icon" onclick="editarCampo('numeroRequisicao')">&#9998;</span>
+          </div>
+        `;
+      }
+
+      html += `
+        <div class="info">
+          <span><strong>Melhoria:</strong> ${dados.melhoria === 'sim' ? 'Sim' : 'Não'}</span>
+          <span class="edit-icon" onclick="editarCampo('melhoria')">&#9998;</span>
+        </div>
+        <div class="item-list">
+          <h3>Itens Registrados:</h3>
+      `;
+      dados.itens.forEach((item, index) => {
+        html += `
+          <div class="item">
+            <div>
+              <strong>Item ${index + 1}:</strong><br>
+              Código: ${item.codigo}<br>
+              Quantidade: ${item.quantidade}
+            </div>
+            <span class="edit-icon" onclick="editarItem(${index})">&#9998;</span>
+          </div>
+        `;
+      });
+
+      html += `</div>
+        <div class="date">Data da Revisão: ${formatarDataAtual()}</div>
+      `;
+      divResumo.innerHTML = html;
+    }
+
+    function editarCampo(campo) {
+      alert(`Função de edição para o campo "${campo}" será implementada aqui.`);
+      // Aqui você adicionaria a lógica para permitir a edição do campo
+      // Por exemplo, redirecionar para uma página de edição ou abrir um modal
+    }
+
+    function editarItem(index) {
+      alert(`Função de edição para o Item ${index + 1} será implementada aqui.`);
+      // Aqui você adicionaria a lógica para permitir a edição do item específico
+    }
+
+    function voltarParaInicio() {
+      alert('Requisição registrada com sucesso! Retornando ao início...');
+      window.location.href = 'index.html';
+    }
+
+    document.addEventListener('DOMContentLoaded', preencherResumo);
   </script>
 </body>
 </html>
