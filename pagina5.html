@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Revisão e Geração de OM - Marcação de Dados</title>
+    <title>Revisão e Geração de RM</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -13,42 +13,37 @@
             min-height: 100vh;
             background-color: #f4f4f4;
             margin: 0;
-            padding: 20px 0; /* Adiciona padding para evitar que o container encoste nas bordas em telas pequenas */
+            padding: 20px 0;
         }
         .container {
             background-color: #fff;
             padding: 30px;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            text-align: left; /* Alinha o texto das informações à esquerda */
             width: 90%;
-            max-width: 550px; /* Levemente aumentado para acomodar mais informações */
+            max-width: 600px;
         }
         h1 {
             color: #333;
             margin-bottom: 25px;
-            text-align: center; /* Centraliza o título */
+            text-align: center;
         }
         p {
-            margin-bottom: 15px;
-            font-size: 1.1em; /* Aumenta um pouco a fonte para melhor leitura */
+            margin-bottom: 10px;
+            font-size: 1.05em;
             color: #555;
-            line-height: 1.6; /* Melhora o espaçamento entre linhas */
+            line-height: 1.6;
         }
         p strong {
             color: #333;
-            display: inline-block; /* Garante que o strong não quebre estranhamente */
-            min-width: 150px; /* Ajuda a alinhar os valores, se desejado */
+            display: inline-block;
+            min-width: 180px;
         }
-        .data-geracao {
-            margin-top: 20px;
-            margin-bottom: 25px;
-            font-style: italic;
-            text-align: right;
-            color: #666;
+        hr {
+            margin: 20px 0;
         }
         button {
-            background-color: #28a745; /* Verde */
+            background-color: #007bff;
             color: white;
             padding: 15px 25px;
             border: none;
@@ -60,70 +55,69 @@
             margin-top: 30px;
         }
         button:hover {
-            background-color: #218838; /* Verde mais escuro no hover */
+            background-color: #0056b3;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Revisar Informações e Gerar OM</h1>
-        <div id="resumoInformacoes">
-            </div>
-        
-        <button onclick="gerarOM()">GERAR OM</button>
+        <h1>Revisar Informações e Gerar RM</h1>
+        <div id="resumoInformacoes"></div>
+        <button onclick="gerarRM()">GERAR RM</button>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const urlParams = new URLSearchParams(window.location.search);
-            const nomeTecnico = urlParams.get('tecnico');
-            const setorEmpresa = urlParams.get('setor'); // Novo parâmetro
-            const tipoRequerimento = urlParams.get('tipo');
-            const centroCustoParam = urlParams.get('centroCusto');
-            const codigoItem = urlParams.get('codigoItem');
-            const quantidade = urlParams.get('quantidade');
-            const melhoria = urlParams.get('melhoria');
+            const dadosBrutos = urlParams.get('dados');
 
-            // Formatando o Centro de Custo para exibição amigável
-            let centroCustoDisplay = decodeURIComponent(centroCustoParam);
-            // Converte hífens em espaços e capitaliza cada palavra
-            centroCustoDisplay = centroCustoDisplay.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+            if (!dadosBrutos) {
+                alert('Dados não encontrados. Retorne à etapa anterior.');
+                window.location.href = 'pagina4.html';
+                return;
+            }
 
-            // Formatando o Tipo de Requerimento
-            const tipoRequerimentoDisplay = tipoRequerimento === 'retirada' ? 'Retirada de Material' : 'Empréstimo de Material';
-            
-            // Obtendo e formatando a data atual
+            const dados = JSON.parse(decodeURIComponent(dadosBrutos));
+
+            // Formatação da data e hora
             const hoje = new Date();
-            const dia = hoje.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' }); // Formato DD/MM/AAAA
-            const hora = hoje.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }); // Formato HH:MM
+            const dia = hoje.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            const hora = hoje.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 
+            // Exibição amigável do centro de custo
+            const centroCustoDisplay = dados.centroCusto
+                .split('-')
+                .map(palavra => palavra.charAt(0).toUpperCase() + palavra.slice(1))
+                .join(' ');
+
+            const tipoRequerimentoDisplay = dados.tipoRequerimento === 'retirada' ? 'Retirada de Material' : 'Empréstimo de Material';
+
+            // Gera a lista de itens dinamicamente
+            let itensHtml = '';
+            dados.itens.forEach((item, index) => {
+                itensHtml += `<p><strong>Item ${index + 1}:</strong> ${item.codigo} — Quantidade: ${item.quantidade}</p>`;
+            });
+
+            // Montagem do resumo
             const resumoDiv = document.getElementById('resumoInformacoes');
-            resumoDiv.innerHTML = \`
-                <p><strong>Data da Geração:</strong> \${dia} às \${hora}</p>
+            resumoDiv.innerHTML = `
+                <p><strong>Data da Geração:</strong> ${dia} às ${hora}</p>
                 <hr>
-                <p><strong>Técnico:</strong> \${decodeURIComponent(nomeTecnico)}</p>
-                <p><strong>Setor/Empresa:</strong> \${decodeURIComponent(setorEmpresa)}</p>
-                <p><strong>Tipo de Requerimento:</strong> \${tipoRequerimentoDisplay}</p>
-                <p><strong>Centro de Custo:</strong> \${centroCustoDisplay}</p>
+                <p><strong>Técnico:</strong> ${decodeURIComponent(dados.tecnico)}</p>
+                <p><strong>Setor/Empresa:</strong> ${decodeURIComponent(dados.setor)}</p>
+                <p><strong>Tipo de Requerimento:</strong> ${tipoRequerimentoDisplay}</p>
+                <p><strong>Centro de Custo:</strong> ${centroCustoDisplay}</p>
+                ${dados.tipoRequisicao ? `<p><strong>Tipo de Requisição:</strong> ${dados.tipoRequisicao}</p>` : ''}
+                ${dados.numeroRequisicao ? `<p><strong>Número da Requisição:</strong> ${dados.numeroRequisicao}</p>` : ''}
+                <p><strong>Descrição de Uso:</strong> ${dados.descricaoUso}</p>
                 <hr>
-                <p><strong>Código do Item:</strong> \${decodeURIComponent(codigoItem)}</p>
-                <p><strong>Quantidade:</strong> \${decodeURIComponent(quantidade)}</p>
-                <p><strong>Para Melhoria:</strong> \${melhoria === 'sim' ? 'Sim' : 'Não'}</p>
-            \`;
+                ${itensHtml}
+                <p><strong>Para Melhoria:</strong> ${dados.melhoria === 'sim' ? 'Sim' : 'Não'}</p>
+            `;
         });
 
-        function gerarOM() {
-            // Em um sistema real, aqui você enviaria esses dados para um servidor/banco de dados
-            // e geraria de fato a Ordem de Movimentação.
-            
-            // Você também poderia coletar os dados mostrados no resumo aqui, se precisasse enviá-los.
-            // Exemplo:
-            // const nomeTecnico = new URLSearchParams(window.location.search).get('tecnico');
-            // ... e assim por diante para todos os campos.
-            
-            alert('Ordem de Movimentação (OM) gerada com sucesso! Voltando para o início...');
-            
-            // Redireciona de volta para a página inicial
+        function gerarRM() {
+            alert('Requisição de Material (RM) gerada com sucesso! Voltando para o início...');
             window.location.href = 'index.html';
         }
     </script>
