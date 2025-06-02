@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detalhes do Item - Marcação de Dados</title>
+    <title>Detalhes dos Itens - Marcação de Dados</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -21,7 +21,7 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             text-align: center;
             width: 90%;
-            max-width: 400px;
+            max-width: 500px; /* Aumentado para acomodar mais campos */
         }
         h1 {
             color: #333;
@@ -37,7 +37,20 @@
         .input-group {
             display: flex;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px; /* Espaçamento menor entre grupos */
+        }
+        .input-group.dynamic-item {
+            border: 1px solid #eee;
+            border-radius: 4px;
+            padding: 10px;
+            margin-bottom: 15px;
+            background-color: #fdfdfd;
+            flex-wrap: wrap; /* Permite que os elementos quebrem a linha dentro do grupo */
+        }
+        .input-group.dynamic-item label {
+            width: 100%; /* Labels dentro do item dinâmico ocupam toda a largura */
+            margin-bottom: 5px;
+            font-weight: normal; /* Labels dentro do item dinâmico são menos fortes */
         }
         .input-group span {
             background-color: #e9ecef;
@@ -51,19 +64,34 @@
             align-items: center;
         }
         input[type="text"],
-        input[type="number"] {
+        input[type="number"],
+        textarea,
+        select {
             flex-grow: 1;
             padding: 10px;
             border: 1px solid #ddd;
-            border-radius: 0 4px 4px 0;
+            border-radius: 0 4px 4px 0; /* Apenas o lado direito arredondado */
             font-size: 16px;
             height: 38px;
             box-sizing: border-box;
+            margin-left: -1px; /* Remove a pequena borda dupla */
         }
         input[type="number"] {
-            border-radius: 4px;
-            width: calc(100% - 20px);
+            border-radius: 4px; /* O seletor de número não precisa do span */
+            width: calc(100% - 20px); /* Ajusta largura */
             margin-bottom: 20px;
+        }
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            width: calc(100% - 20px);
+        }
+        select {
+            width: 100%;
+            border-radius: 4px;
+            margin-bottom: 10px;
         }
         .radio-group {
             text-align: left;
@@ -87,70 +115,170 @@
             font-size: 16px;
             transition: background-color 0.3s ease;
             width: 100%;
+            margin-top: 20px;
         }
         button:hover {
             background-color: #218838; /* Verde mais escuro no hover */
+        }
+        .quantidade-item-input {
+            margin-top: 10px; /* Espaço entre código MAN e quantidade */
+            width: 100%;
+            box-sizing: border-box;
+            border-radius: 4px;
+            margin-left: 0; /* Override do margin-left padrão */
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1 id="tituloItem"></h1>
+        <h1 id="tituloPagina"></h1>
         
-        <label for="codigoItem">Qual o código do item que você está <span id="tipoAcao"></span>?</label>
-        <div class="input-group">
-            <span>MAN-</span>
-            <input type="text" id="codigoItem" placeholder="Digite o código do item" required>
+        <label for="numItens">Quantos itens você vai registrar?</label>
+        <input type="number" id="numItens" min="1" max="15" value="1" onchange="gerarCamposItens()" style="width: 100px; text-align: center;">
+
+        <div id="itensContainer">
+            </div>
+
+        <label for="descricaoUso">Faça uma breve descrição para utilização desse(s) item(s):</label>
+        <textarea id="descricaoUso" placeholder="Ex: Para manutenção preventiva do motor X"></textarea>
+
+        <label for="tipoRequisicao">Sua requisição é uma:</label>
+        <select id="tipoRequisicao" onchange="toggleNumeroRequisicao()">
+            <option value="">Não informado (Opcional)</option>
+            <option value="OM">Ordem de Movimentação (OM)</option>
+            <option value="SM">Solicitação de Material (SM)</option>
+        </select>
+        
+        <div id="campoNumeroRequisicao" style="display: none; margin-top: 15px;">
+            <label for="numeroRequisicao">Qual o número dela?</label>
+            <input type="text" id="numeroRequisicao" placeholder="Número da OM/SM" style="width: calc(100% - 20px); border-radius: 4px;">
         </div>
-        
-        <label for="quantidade">Qual a quantidade?</label>
-        <input type="number" id="quantidade" min="1" max="499" value="1" required>
 
         <div class="radio-group">
-            <label>O item é para melhoria?</label><br>
+            <label>Esse item será usado para melhoria?</label><br>
             <input type="radio" id="melhoriaSim" name="melhoria" value="sim" required>
             <label for="melhoriaSim">Sim</label>
             <input type="radio" id="melhoriaNao" name="melhoria" value="nao">
             <label for="melhoriaNao">Não</label>
         </div>
         
-        <button onclick="registrarItem()">Registrar Item</button>
+        <button onclick="registrarItens()">Registrar Itens</button>
     </div>
 
     <script>
+        let globalTecnico = '';
+        let globalSetor = '';
+        let globalTipoRequerimento = '';
+        let globalCentroCusto = '';
+
         document.addEventListener('DOMContentLoaded', function() {
             const urlParams = new URLSearchParams(window.location.search);
-            const tipoRequerimento = urlParams.get('tipo'); 
+            globalTecnico = urlParams.get('tecnico');
+            globalSetor = urlParams.get('setor');
+            globalTipoRequerimento = urlParams.get('tipo'); 
+            globalCentroCusto = urlParams.get('centroCusto');
             
-            const acao = tipoRequerimento === 'retirada' ? 'retirando' : 'emprestando';
-            document.getElementById('tipoAcao').innerText = acao;
-            document.getElementById('tituloItem').innerText = `Detalhes do Item para ${acao.charAt(0).toUpperCase() + acao.slice(1)}`;
+            const acao = globalTipoRequerimento === 'retirada' ? 'Retirada' : 'Empréstimo';
+            document.getElementById('tituloPagina').innerText = `Registrar Itens para ${acao}`;
+
+            // Gera os campos iniciais para 1 item
+            gerarCamposItens();
         });
 
-        function registrarItem() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const nomeTecnico = urlParams.get('tecnico');
-            const tipoRequerimento = urlParams.get('tipo');
-            const centroCusto = urlParams.get('centroCusto');
-            
-            const codigoItem = 'MAN-' + document.getElementById('codigoItem').value.trim();
-            const quantidade = document.getElementById('quantidade').value;
+        function gerarCamposItens() {
+            const numItens = parseInt(document.getElementById('numItens').value);
+            const itensContainer = document.getElementById('itensContainer');
+            itensContainer.innerHTML = ''; // Limpa os campos existentes
+
+            for (let i = 0; i < numItens; i++) {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'input-group dynamic-item';
+                itemDiv.innerHTML = `
+                    <label>Item ${i + 1}:</label>
+                    <div style="display: flex; width: 100%; margin-bottom: 10px;">
+                        <span>MAN-</span>
+                        <input type="text" id="codigoItem${i}" placeholder="Código do item" required>
+                    </div>
+                    <label>Quantidade:</label>
+                    <input type="number" id="quantidade${i}" min="1" max="499" value="1" class="quantidade-item-input" required>
+                `;
+                itensContainer.appendChild(itemDiv);
+            }
+        }
+
+        function toggleNumeroRequisicao() {
+            const tipoRequisicao = document.getElementById('tipoRequisicao').value;
+            const campoNumero = document.getElementById('campoNumeroRequisicao');
+            if (tipoRequisicao !== '') {
+                campoNumero.style.display = 'block';
+                document.getElementById('numeroRequisicao').focus(); // Foca no campo ao aparecer
+            } else {
+                campoNumero.style.display = 'none';
+                document.getElementById('numeroRequisicao').value = ''; // Limpa o valor se ocultar
+            }
+        }
+
+        function registrarItens() {
+            const numItens = parseInt(document.getElementById('numItens').value);
+            const itensRegistrados = [];
+
+            // Valida e coleta dados de cada item
+            for (let i = 0; i < numItens; i++) {
+                const codigoInput = document.getElementById(`codigoItem${i}`);
+                const quantidadeInput = document.getElementById(`quantidade${i}`);
+
+                if (codigoInput.value.trim() === '') {
+                    alert(`Por favor, insira o código do Item ${i + 1}.`);
+                    codigoInput.focus();
+                    return;
+                }
+                if (parseInt(quantidadeInput.value) < 1 || parseInt(quantidadeInput.value) > 499) {
+                    alert(`A quantidade para o Item ${i + 1} deve estar entre 1 e 499.`);
+                    quantidadeInput.focus();
+                    return;
+                }
+                
+                itensRegistrados.push({
+                    codigo: 'MAN-' + codigoInput.value.trim(),
+                    quantidade: parseInt(quantidadeInput.value)
+                });
+            }
+
+            const descricaoUso = document.getElementById('descricaoUso').value.trim();
+            const tipoRequisicao = document.getElementById('tipoRequisicao').value;
+            const numeroRequisicao = document.getElementById('numeroRequisicao').value.trim();
             const melhoria = document.querySelector('input[name="melhoria"]:checked');
 
-            if (document.getElementById('codigoItem').value.trim() === '') {
-                alert('Por favor, insira o código do item.');
-                return;
-            }
-            if (quantidade < 1 || quantidade > 499) {
-                alert('A quantidade deve estar entre 1 e 499.');
+            if (descricaoUso === '') {
+                alert('Por favor, faça uma breve descrição para utilização do(s) item(s).');
+                document.getElementById('descricaoUso').focus();
                 return;
             }
             if (!melhoria) {
-                alert('Por favor, selecione se o item é para melhoria.');
+                alert('Por favor, selecione se o item será usado para melhoria.');
                 return;
             }
+            // Não validamos se numeroRequisicao está preenchido, pois é opcional
+
+            // Prepara os dados para passar para a próxima página
+            const dadosParaRevisao = {
+                tecnico: globalTecnico,
+                setor: globalSetor,
+                tipoRequerimento: globalTipoRequerimento,
+                centroCusto: globalCentroCusto,
+                itens: itensRegistrados, // Array de itens
+                descricaoUso: descricaoUso,
+                tipoRequisicao: tipoRequisicao,
+                numeroRequisicao: numeroRequisicao,
+                melhoria: melhoria.value
+            };
+
+            // Para passar um array de objetos (itens) via URL é um pouco complexo.
+            // Uma prática comum é JSON.stringify e depois encodeURIComponent.
+            // A página de destino precisará fazer JSON.parse e decodeURIComponent.
+            const dadosCodificados = encodeURIComponent(JSON.stringify(dadosParaRevisao));
             
-            window.location.href = `pagina5.html?tecnico=${encodeURIComponent(nomeTecnico)}&tipo=${encodeURIComponent(tipoRequerimento)}&centroCusto=${encodeURIComponent(centroCusto)}&codigoItem=${encodeURIComponent(codigoItem)}&quantidade=${encodeURIComponent(quantidade)}&melhoria=${encodeURIComponent(melhoria.value)}`;
+            window.location.href = `pagina5.html?dados=${dadosCodificados}`;
         }
     </script>
 </body>
