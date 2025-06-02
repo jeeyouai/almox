@@ -61,17 +61,28 @@
         <h1>Marcação de Dados do Almoxarifado</h1>
         <label for="nomeTecnico">Qual o nome do técnico que está iniciando o processo?</label>
         <input type="text" id="nomeTecnico" placeholder="Digite o nome do técnico" required>
+        
+        <label for="setorEmpresa">Qual o seu setor/empresa?</label>
+        <input type="text" id="setorEmpresa" placeholder="Digite o setor ou empresa" required>
+        
         <button onclick="proximaPagina()">Continuar</button>
     </div>
 
     <script>
         function proximaPagina() {
             const nomeTecnico = document.getElementById('nomeTecnico').value;
+            const setorEmpresa = document.getElementById('setorEmpresa').value;
+
             if (nomeTecnico.trim() === '') {
                 alert('Por favor, insira o nome do técnico para continuar.');
                 return;
             }
-            window.location.href = `pagina2.html?tecnico=${encodeURIComponent(nomeTecnico)}`;
+            if (setorEmpresa.trim() === '') {
+                alert('Por favor, insira o setor/empresa para continuar.');
+                return;
+            }
+            // Passa tanto o nome quanto o setor/empresa para a próxima página
+            window.location.href = `pagina2.html?tecnico=${encodeURIComponent(nomeTecnico)}&setor=${encodeURIComponent(setorEmpresa)}`;
         }
     </script>
 </body>
