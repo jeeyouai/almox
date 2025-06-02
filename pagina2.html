@@ -55,8 +55,8 @@
     <div class="container">
         <h1 id="tituloRequerimento"></h1>
         <ul>
-            <li><button onclick="selecionarRequerimento('retirada')">Retirada de Material</button></li>
-            <li><button onclick="selecionarRequerimento('emprestimo')">Empréstimo de Material</button></li>
+            <li><button onclick="selecionarRequerimento('retirada')">Retirada de material - RM</button></li>
+            <li><button onclick="selecionarRequerimento('emprestimo')">Empréstimo de material - EM</button></li>
         </ul>
     </div>
 
@@ -64,6 +64,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             const urlParams = new URLSearchParams(window.location.search);
             const nomeTecnico = urlParams.get('tecnico');
+            const setorEmpresa = urlParams.get('setor'); // Pega o setor da URL
 
             if (nomeTecnico) {
                 document.getElementById('tituloRequerimento').innerText = `${decodeURIComponent(nomeTecnico)}, qual requerimento você quer fazer?`;
@@ -75,8 +76,10 @@
         function selecionarRequerimento(tipo) {
             const urlParams = new URLSearchParams(window.location.search);
             const nomeTecnico = urlParams.get('tecnico');
-            
-            window.location.href = `pagina3.html?tecnico=${encodeURIComponent(nomeTecnico)}&tipo=${encodeURIComponent(tipo)}`;
+            const setorEmpresa = urlParams.get('setor'); // Pega o setor da URL
+
+            // Passa nome, setor e tipo para a próxima página
+            window.location.href = `pagina3.html?tecnico=${encodeURIComponent(nomeTecnico)}&setor=${encodeURIComponent(setorEmpresa)}&tipo=${encodeURIComponent(tipo)}`;
         }
     </script>
 </body>
