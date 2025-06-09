@@ -165,46 +165,75 @@
         <button onclick="registrarItens()">Registrar Itens</button>
     </div>
 
-    <script>
-        let globalTecnico = '';
-        let globalSetor = '';
-        let globalTipoRequerimento = '';
-        let globalCentroCusto = '';
+   <script>
+    let globalTecnico = '';
+    let globalSetor = '';
+    let globalTipoRequerimento = '';
+    let globalCentroCusto = '';
+    let dadosItensJSON = [];
 
-        document.addEventListener('DOMContentLoaded', function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            globalTecnico = urlParams.get('tecnico');
-            globalSetor = urlParams.get('setor');
-            globalTipoRequerimento = urlParams.get('tipo'); 
-            globalCentroCusto = urlParams.get('centroCusto');
-            
-            const acao = globalTipoRequerimento === 'retirada' ? 'Retirada' : 'Empréstimo';
-            document.getElementById('tituloPagina').innerText = `Registrar Itens para ${acao}`;
+    document.addEventListener('DOMContentLoaded', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        globalTecnico = urlParams.get('tecnico');
+        globalSetor = urlParams.get('setor');
+        globalTipoRequerimento = urlParams.get('tipo'); 
+        globalCentroCusto = urlParams.get('centroCusto');
 
-            // Gera os campos iniciais para 1 item
-            gerarCamposItens();
-        });
+        const acao = globalTipoRequerimento === 'retirada' ? 'Retirada' : 'Empréstimo';
+        document.getElementById('tituloPagina').innerText = `Registrar Itens para ${acao}`;
 
-        function gerarCamposItens() {
-            const numItens = parseInt(document.getElementById('numItens').value);
-            const itensContainer = document.getElementById('itensContainer');
-            itensContainer.innerHTML = ''; // Limpa os campos existentes
+        // Carrega os dados JSON
+        fetch('csvjson.json')
+          .then(res => res.json())
+          .then(data => {
+            dadosItensJSON = data;
+          })
+          .catch(err => {
+            alert('Erro ao carregar o arquivo JSON de itens.');
+            console.error(err);
+          });
 
-            for (let i = 0; i < numItens; i++) {
-                const itemDiv = document.createElement('div');
-                itemDiv.className = 'input-group dynamic-item';
-                itemDiv.innerHTML = `
-                    <label>Item ${i + 1}:</label>
-                    <div style="display: flex; width: 100%; margin-bottom: 10px;">
-                        <span>MAN-</span>
-                        <input type="text" id="codigoItem${i}" placeholder="Código do item" required>
-                    </div>
-                    <label>Quantidade:</label>
-                    <input type="number" id="quantidade${i}" min="1" max="499" value="1" class="quantidade-item-input" required>
-                `;
-                itensContainer.appendChild(itemDiv);
-            }
+        gerarCamposItens();
+    });
+
+    function gerarCamposItens() {
+        const numItens = parseInt(document.getElementById('numItens').value);
+        const itensContainer = document.getElementById('itensContainer');
+        itensContainer.innerHTML = '';
+
+        for (let i = 0; i < numItens; i++) {
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'input-group dynamic-item';
+            itemDiv.innerHTML = `
+                <label>Item ${i + 1}:</label>
+                <div style="display: flex; width: 100%; margin-bottom: 10px;">
+                    <span>MAN-</span>
+                    <input type="text" id="codigoItem${i}" placeholder="Código do item" required oninput="buscarDadosItem(${i})">
+                </div>
+                <div id="infoItem${i}" style="font-size: 14px; color: #333; text-align: left; padding: 10px 0;"></div>
+                <label>Quantidade:</label>
+                <input type="number" id="quantidade${i}" min="1" max="499" value="1" class="quantidade-item-input" required>
+            `;
+            itensContainer.appendChild(itemDiv);
         }
+    }
+
+    function buscarDadosItem(index) {
+        const codigoDigitado = document.getElementById(`codigoItem${index}`).value.trim();
+        const codigoCompleto = `MAN${codigoDigitado}`;
+        const infoDiv = document.getElementById(`infoItem${index}`);
+        const itemEncontrado = dadosItensJSON.find(item => item['CÓDIGO'] === codigoCompleto);
+
+        if (itemEncontrado) {
+            infoDiv.innerHTML = `
+                <strong>Descrição:</strong> ${itemEncontrado['DESCRIÇÃO']}<br>
+                <strong>Localização:</strong> ${itemEncontrado['LOCALIZAÇÃO']}<br>
+                <strong>Estoque Atual:</strong> ${itemEncontrado['QUANTIDADE EM ESTOQUE']}
+            `;
+        } else {
+            infoDiv.innerHTML = `<span style="color: red;">Item não encontrado.</span>`;
+        }
+    }
 
         function toggleNumeroRequisicao() {
             const tipoRequisicao = document.getElementById('tipoRequisicao').value;
