@@ -42,7 +42,7 @@
             font-size: 16px;
         }
         button {
-            background-color: #28a745; /* Verde */
+            background-color: #28a745;
             color: white;
             padding: 12px 20px;
             border: none;
@@ -52,7 +52,7 @@
             transition: background-color 0.3s ease;
         }
         button:hover {
-            background-color: #218838; /* Verde mais escuro no hover */
+            background-color: #218838;
         }
 
     </style>
@@ -83,7 +83,7 @@
                 alert('Por favor, insira o setor/empresa para continuar.');
                 return;
             }
-            // Passa tanto o nome quanto o setor/empresa para a próxima página
+            
             window.location.href = `pagina2.html?tecnico=${encodeURIComponent(nomeTecnico)}&setor=${encodeURIComponent(setorEmpresa)}`;
         }
     </script>
