@@ -143,7 +143,23 @@
         <h1 id="tituloPagina"></h1>
         
         <label for="numItens">Quantos itens você vai registrar?</label>
-        <input type="number" id="numItens" min="1" max="15" value="1" onchange="gerarCamposItens()" style="width: 100px; text-align: center;">
+        <select id="numItens" onchange="gerarCamposItens()" style="width: 100px; text-align: center; border-radius: 4px;">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+                <option value="12">12</option>
+                <option value="13">13</option>
+                <option value="14">14</option>
+                <option value="15">15</option>
+        </select>
 
         <div id="itensContainer">
             </div>
