@@ -36,7 +36,7 @@
             margin-bottom: 15px;
         }
         button {
-            background-color: #28a745; /* Verde */
+            background-color: #28a745;
             color: white;
             padding: 12px 20px;
             border: none;
@@ -47,7 +47,7 @@
             transition: background-color 0.3s ease;
         }
         button:hover {
-            background-color: #218838; /* Verde mais escuro no hover */
+            background-color: #218838;
         }
     </style>
 </head>
@@ -64,7 +64,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             const urlParams = new URLSearchParams(window.location.search);
             const nomeTecnico = urlParams.get('tecnico');
-            const setorEmpresa = urlParams.get('setor'); // Pega o setor da URL
+            const setorEmpresa = urlParams.get('setor');
 
             if (nomeTecnico) {
                 document.getElementById('tituloRequerimento').innerText = `${decodeURIComponent(nomeTecnico)}, qual requerimento você quer fazer?`;
@@ -76,9 +76,9 @@
         function selecionarRequerimento(tipo) {
             const urlParams = new URLSearchParams(window.location.search);
             const nomeTecnico = urlParams.get('tecnico');
-            const setorEmpresa = urlParams.get('setor'); // Pega o setor da URL
+            const setorEmpresa = urlParams.get('setor');
 
-            // Passa nome, setor e tipo para a próxima página
+            
             window.location.href = `pagina3.html?tecnico=${encodeURIComponent(nomeTecnico)}&setor=${encodeURIComponent(setorEmpresa)}&tipo=${encodeURIComponent(tipo)}`;
         }
     </script>
