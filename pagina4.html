@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detalhes dos Itens - Marcação de Dados</title>
+    <title>Retirada de Itens</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -21,7 +21,7 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             text-align: center;
             width: 90%;
-            max-width: 500px; /* Aumentado para acomodar mais campos */
+            max-width: 500px; 
         }
         h1 {
             color: #333;
@@ -37,7 +37,7 @@
         .input-group {
             display: flex;
             align-items: center;
-            margin-bottom: 15px; /* Espaçamento menor entre grupos */
+            margin-bottom: 15px; 
         }
         .input-group.dynamic-item {
             border: 1px solid #eee;
@@ -45,12 +45,12 @@
             padding: 10px;
             margin-bottom: 15px;
             background-color: #fdfdfd;
-            flex-wrap: wrap; /* Permite que os elementos quebrem a linha dentro do grupo */
+            flex-wrap: wrap; 
         }
         .input-group.dynamic-item label {
-            width: 100%; /* Labels dentro do item dinâmico ocupam toda a largura */
+            width: 100%; 
             margin-bottom: 5px;
-            font-weight: normal; /* Labels dentro do item dinâmico são menos fortes */
+            font-weight: normal; 
         }
         .input-group span {
             background-color: #e9ecef;
@@ -67,18 +67,19 @@
         input[type="number"],
         textarea,
         select {
+            width: 100%;
             flex-grow: 1;
             padding: 10px;
             border: 1px solid #ddd;
-            border-radius: 0 4px 4px 0; /* Apenas o lado direito arredondado */
+            border-radius: 0 4px 4px 0; 
             font-size: 16px;
             height: 38px;
             box-sizing: border-box;
-            margin-left: -1px; /* Remove a pequena borda dupla */
+            
         }
         input[type="number"] {
-            border-radius: 4px; /* O seletor de número não precisa do span */
-            width: calc(100% - 20px); /* Ajusta largura */
+            border-radius: 4px; 
+            width: calc(100% - 20px); 
             margin-bottom: 20px;
         }
         textarea {
@@ -106,7 +107,7 @@
             font-weight: normal;
         }
         button {
-            background-color: #28a745; /* Verde */
+            background-color: #28a745; 
             color: white;
             padding: 12px 20px;
             border: none;
@@ -118,14 +119,14 @@
             margin-top: 20px;
         }
         button:hover {
-            background-color: #218838; /* Verde mais escuro no hover */
+            background-color: #218838; 
         }
         .quantidade-item-input {
-            margin-top: 10px; /* Espaço entre código MAN e quantidade */
+            margin-top: 10px; 
             width: 100%;
             box-sizing: border-box;
             border-radius: 4px;
-            margin-left: 0; /* Override do margin-left padrão */
+            margin-left: 0; 
         }
 .sugestoes-lista li {
     padding: 8px;
@@ -190,7 +191,7 @@
         const acao = globalTipoRequerimento === 'retirada' ? 'Retirada' : 'Empréstimo';
         document.getElementById('tituloPagina').innerText = `Registrar Itens para ${acao}`;
 
-        // Carrega os dados JSON
+        // DADOS JSON
         fetch('csvjson.json')
           .then(res => res.json())
           .then(data => {
@@ -249,10 +250,10 @@
             const campoNumero = document.getElementById('campoNumeroRequisicao');
             if (tipoRequisicao !== '') {
                 campoNumero.style.display = 'block';
-                document.getElementById('numeroRequisicao').focus(); // Foca no campo ao aparecer
+                document.getElementById('numeroRequisicao').focus(); 
             } else {
                 campoNumero.style.display = 'none';
-                document.getElementById('numeroRequisicao').value = ''; // Limpa o valor se ocultar
+                document.getElementById('numeroRequisicao').value = ''; 
             }
         }
 
@@ -260,7 +261,7 @@
             const numItens = parseInt(document.getElementById('numItens').value);
             const itensRegistrados = [];
 
-            // Valida e coleta dados de cada item
+            
             for (let i = 0; i < numItens; i++) {
                 const codigoInput = document.getElementById(`codigoItem${i}`);
                 const quantidadeInput = document.getElementById(`quantidade${i}`);
@@ -296,24 +297,22 @@
                 alert('Por favor, selecione se o item será usado para melhoria.');
                 return;
             }
-            // Não validamos se numeroRequisicao está preenchido, pois é opcional
+            
 
-            // Prepara os dados para passar para a próxima página
+
             const dadosParaRevisao = {
                 tecnico: globalTecnico,
                 setor: globalSetor,
                 tipoRequerimento: globalTipoRequerimento,
                 centroCusto: globalCentroCusto,
-                itens: itensRegistrados, // Array de itens
+                itens: itensRegistrados, 
                 descricaoUso: descricaoUso,
                 tipoRequisicao: tipoRequisicao,
                 numeroRequisicao: numeroRequisicao,
                 melhoria: melhoria.value
             };
 
-            // Para passar um array de objetos (itens) via URL é um pouco complexo.
-            // Uma prática comum é JSON.stringify e depois encodeURIComponent.
-            // A página de destino precisará fazer JSON.parse e decodeURIComponent.
+            
             const dadosCodificados = encodeURIComponent(JSON.stringify(dadosParaRevisao));
             
             window.location.href = `pagina5.html?dados=${dadosCodificados}`;
