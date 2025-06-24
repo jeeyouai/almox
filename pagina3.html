@@ -11,7 +11,7 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background-color: #f4f4f4;
+            background-color: #003C41;
             margin: 0;
         }
         .container {
@@ -45,7 +45,7 @@
             margin-bottom: 15px;
         }
         button {
-            background-color: #28a745; 
+            background-color: #005A4B; 
             color: white;
             padding: 12px 20px;
             border: none;
@@ -58,9 +58,16 @@
             text-align: center;
         }
         button:hover {
-            background-color: #218838; 
+            background-color: #003C41; 
         }
-        
+        .logo {
+             position: fixed;
+    top: 10px;
+    left: 10px;
+    width: 250px; 
+    height: auto;
+    z-index: 1000; 
+}
         @media (max-width: 600px) {
             .columns-container {
                 flex-direction: column;
@@ -74,6 +81,9 @@
     </style>
 </head>
 <body>
+    <a href="https://www.biotrop.com.br" target="_blank">
+    <img src="biologo.png" alt="Logo da Empresa" class="logo">
+</a>
     <div class="container">
         <h1 id="tituloCentroCusto">Qual o centro de custo do material?</h1>
         <div class="columns-container">
